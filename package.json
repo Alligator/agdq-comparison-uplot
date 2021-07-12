@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "d3": "^7.0.0",
+    "d3-axis": "^3.0.0",
+    "d3-scale": "^4.0.0",
+    "d3-time-format": "^4.0.0",
+    "esbuild": "^0.12.15",
+    "uplot": "^1.6.13"
+  },
+  "name": "agdq-comparison-new",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "esbuild src/agdq-comparison.js --bundle --outfile=build/bundle.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

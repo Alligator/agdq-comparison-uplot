@@ -1,0 +1,63 @@
+{
+  "sgdq21": {
+    "url": "/sgdq21/sgdq21.json",
+    "start": "2021-07-04T11:00:00.000Z",
+    "highlight": true
+  },
+  "agdq21": {
+    "url": "/agdq21/agdq21.json",
+    "start": "2021-01-03T12:00:00.000Z"
+  },
+  "sgdq20": {
+    "url": "/sgdq20/sgdq20.json",
+    "start": "2020-08-16T11:00:00.000Z"
+  },
+  "agdq20": {
+    "url": "/agdq20/agdq20.json",
+    "start": "2020-01-05T12:00:00.000Z"
+  },
+  "sgdq19": {
+    "url": "/sgdq19/sgdq19.json",
+    "start": "2019-06-23T11:00:00.000Z"
+  },
+  "agdq19": {
+    "url": "/agdq19/agdq19.json",
+    "start": "2019-01-06T12:00:00.000Z"
+  },
+  "sgdq18": {
+    "url": "/sgdq18/sgdq18.json",
+    "start": "2018-06-24T11:00:00.000Z"
+  },
+  "agdq18": {
+    "url": "/agdq18/agdq18.json",
+    "start": "2018-01-07T12:00:00.000Z"
+  },
+  "sgdq17": {
+    "url": "/sgdq17/sgdq17.json",
+    "start": "2017-07-02T11:00:00.000Z"
+  },
+  "agdq17": {
+    "url": "/agdq17/agdq17.json",
+    "start": "2017-01-08T12:00:00.000Z"
+  },
+  "sgdq16": {
+    "url": "/sgdq16/sgdq16.json",
+    "start": "2016-07-03T11:00:00.000Z"
+  },
+  "agdq16": {
+    "url": "/agdq16/agdq16.json",
+    "start": "2016-01-03T12:00:00.000Z"
+  },
+  "sgdq15": {
+    "url": "/sgdq15/sgdq15.json",
+    "start": "2015-07-26T11:00:00.000Z"
+  },
+  "sgdq14": {
+    "url": "/sgdq14/sgdq14.json",
+    "start": "2014-06-22T11:00:00.000Z"
+  },
+  "agdq14": {
+    "url": "/agdq14/agdq14.json",
+    "start": "2014-01-05T12:00:00.000Z"
+  }
+}
