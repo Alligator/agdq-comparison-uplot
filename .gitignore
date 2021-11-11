@@ -2,3 +2,5 @@ node_modules/
 build/*.json
 build/bundle.js
 build/bundle.css
+json-generator/*.db
+json-generator/*.json

@@ -1,38 +1,24 @@
 import { nextColor } from './color';
-import marathonJson from './marathons-dev.json';
 import uPlot from 'uplot';
 import 'uplot/dist/uPlot.min.css'
 
-const marathonNames = Object.keys(marathonJson);
-// reverse to put the most recent ones last.
-// if Object.keys stops returning the keys in the same order as the JSON this
-// won't work...
-marathonNames.reverse();
-
-const rootTimestamp =  new Date(2021, 6, 4, 12, 0).getTime() / 1000;
-
 let donationsOrViewers = 'donations';
 let uplot;
-
-function loadMarathons() {
-  return Promise.all(marathonNames.map(async (marathonName) => {
-    const data = await loadMarathon(marathonName);
-    return { name: marathonName, data };
-  }));
-}
-
-async function loadMarathon(name) {
-  const url = marathonJson[name].url;
-  const response = await fetch(url);
-  if (response.ok) {
-    const json = await response.json();
-    return json.viewers;
-  } else {
-    return null;
-  }
-}
+let marathonColours = {};
+let highlightedMarathon;
 
 window.addEventListener('load', async () => {
+  const response = await fetch('out.json');
+  const data = await response.json();
+
+  data.marathons.forEach((marathon) => {
+    marathonColours[marathon] = nextColor();
+  });
+  highlightedMarathon = data.marathons[data.marathons.length - 1];
+
+  drawGraph(data);
+  drawOtherStats(data);
+
   document.querySelectorAll('input[name=dorv]').forEach((el) => {
     if (el.checked) {
       donationsOrViewers = el.value;
@@ -40,86 +26,21 @@ window.addEventListener('load', async () => {
 
     el.addEventListener('change', (evt) => {
       donationsOrViewers = evt.target.value;
-      const series = createSeries(marathonData);
+      const series = getSeries(data);
       uplot.setData(series, false);
       uplot.redraw();
     });
   });
-
-  const marathonData = await loadMarathons();
-  const series = createSeries(marathonData);
-  drawGraph(series);
-
 });
 
-function createSeries(marathons) {
-  const bucketSize = donationsOrViewers === 'donations' ? 5 : 15; // in minutes
-  const bucketCount = (24 * 60 * 7) / bucketSize;
-
-  // weird fill + map needed so each entry is a _different_ array instance
-  const series = new Array(marathons.length + 1)
-    .fill(0)
-    .map(() => new Array(bucketCount).fill(null));
-
-  // every 5 minutes for a week. 2016 = # of 5 min chunks in a week
-  for (let i = 0; i < bucketCount; i++) {
-    const minuteOffset = i * bucketSize;
-    const timestamp = rootTimestamp + (minuteOffset * 60);
-    series[0][i] = timestamp;
-  }
-
-  marathons.forEach((marathon, idx) => {
-    const startTs = new Date(marathonJson[marathon.name].start).getTime() / 1000;
-
-    // we except one data point per minute of a week. if this marthon has more,
-    // offset so we ignore the ones before
-    const marathonDataOffset = marathon.data.length - (7 * 24 * 60);
-
-    let prevValue = 0;
-    let lastValue = 0;
-    let lastValueIndex = null;
-
-    for (let i = 0; i < bucketCount; i++) {
-      const minuteOffset = i * bucketSize;
-      const dataPoint = marathon.data[minuteOffset + marathonDataOffset];
-      if (dataPoint) {
-        const dataTs = Math.floor((dataPoint[0] - startTs) / 60 / bucketSize);
-        if (donationsOrViewers === 'donations') {
-          series[idx + 1][dataTs] = dataPoint[2];
-          if (typeof dataPoint[2] === 'number') {
-            lastValue = dataPoint[2];
-            lastValueIndex = dataTs;
-          }
-        } else {
-          const value = dataPoint[1] || 0;
-          // disregard any value that's a 50% change from the previouw.
-          if (Math.abs(prevValue - value) > (prevValue / 2)) {
-            series[idx + 1][dataTs] = null;
-          } else {
-            series[idx + 1][dataTs] = dataPoint[1];
-            if (typeof dataPoint[1] === 'number') {
-              lastValue = dataPoint[1];
-              lastValueIndex = dataTs;
-            }
-          }
-          prevValue = value;
-        }
-      }
-    }
-
-    // fill out any points from the end back that are null
-    // unless the marathon started < 7 days ago
-    if ((new Date().getTime() / 1000) - startTs > (7 * 24 * 60 * 60)) {
-      for (let i = lastValueIndex; i < bucketCount; i++) {
-        series[idx + 1][i] = lastValue;
-      }
-    }
-  });
-
-  return series;
+function getSeries({ ts, viewers, donations }) {
+  const series = donationsOrViewers === 'donations' ? donations : viewers;
+  return [ts, ...series];
 }
 
-function drawGraph(series) {
+function drawGraph({ ts, viewers, donations, marathons }) {
+  const series = getSeries({ ts, viewers, donations });
+
   const valueFormatter = (rawValue) => {
     if (donationsOrViewers === 'donations') {
       return rawValue ? '$' + uPlot.fmtNum(rawValue) : rawValue;
@@ -128,10 +49,10 @@ function drawGraph(series) {
     }
   };
 
-  const seriesOpts = marathonNames.map((name) => ({
+  const seriesOpts = marathons.map((name) => ({
     label: name,
-    stroke: marathonJson[name].highlight ? 'white' : nextColor(),
-    width: marathonJson[name].highlight ? 2.5 : 1.5,
+    stroke: name === highlightedMarathon ? '#ccc' : marathonColours[name],
+    width: name === highlightedMarathon ? 2.5 : 1.5,
     paths: uPlot.paths.spline(),
     value: (self, rawvalue) => valueFormatter(rawvalue),
   }));
@@ -153,14 +74,16 @@ function drawGraph(series) {
     ],
     axes: [
       {
-        stroke: 'white',
+        stroke: '#ccc',
+        font: '12px Inter',
         grid: { stroke: '#333333' },
         ticks: { stroke: '#bbbbbb' },
         values: '{WWW} {HH}:{mm} {aa}',
         space: 100,
       },
       {
-        stroke: 'white',
+        stroke: '#ccc',
+        font: '12px Inter',
         grid: { stroke: '#333333' },
         ticks: { stroke: '#bbbbbb' },
         size: 80,
@@ -231,4 +154,39 @@ function tooltipsPlugin(opts) {
       setCursor,
     },
   };
+}
+
+function drawOtherStats({ other_stats }) {
+  const el = document.getElementById('other-stats');
+
+  const table = document.createElement('table');
+  table.innerHTML = `
+    <thead>
+      <th>marathon</th>
+      <th>donation total</th>
+      <th>peak viewers</th>
+      <th>time of peak viewers</th>
+      <th>game at peak viewers</th>
+    </thead>`;
+  
+  const tbody = document.createElement('tbody');
+  table.appendChild(tbody);
+
+  const dateFormatter = uPlot.fmtDate('{WWW} {HH}:{mm} {aa}');
+  other_stats.forEach((row) => {
+    const tr = document.createElement('tr');
+
+    const ts = dateFormatter(new Date(row.max_viewers_ts * 1000));
+    const color = row.name === highlightedMarathon ? 'white' : marathonColours[row.name];
+
+    tr.innerHTML = `
+      <td style="color:${color}">${row.name}</td>
+      <td>$${row.max_donations.toLocaleString()}</td>
+      <td>${row.max_viewers.toLocaleString()}</td>
+      <td>${ts}</td>
+      <td>${row.max_viewers_game}</td>`;
+    tbody.appendChild(tr);
+  });
+  
+  el.appendChild(table);
 }

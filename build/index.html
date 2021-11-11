@@ -5,10 +5,15 @@
     <script type="text/javascript" src="bundle.js"></script>
     <link rel="stylesheet" href="bundle.css">
     <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
 body {
-  background: #111120;
-  color: #e0d0ff;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  background: #222;
+  color: #ccc;
+  font-family: 'Inter', sans-serif;
+}
+a, a:visited {
+  color: dodgerblue;
 }
 .u-select {
   background: rgba(255,255,255,0.07);
@@ -22,6 +27,34 @@ p {
 }
 header {
   text-align: center;
+}
+table {
+  border: 1px solid #4c4c4c;
+  border-radius: 5px;
+  border-spacing: 0;
+  overflow: hidden;
+}
+th, td {
+  padding: 8px 10px;
+}
+tr:nth-child(even) > td {
+  background-color: #2a2a2a;
+}
+thead {
+  background-color: #3a3a3a;
+  text-align: left;
+  font-size: 10pt;
+}
+h2 {
+  text-align: center;
+}
+footer {
+  text-align: center;
+  padding: 1rem;
+}
+#other-stats {
+  display: flex;
+  justify-content: center;
 }
     </style>
     <title>GDQ Comparison - alligator</title>
@@ -44,6 +77,11 @@ header {
       </p>
     </header>
     <div id="main-chart"></div>
+    <h2>Interesting stats</h2>
+    <div id="other-stats"></div>
+    <footer>
+    by <a href="https://gdq.alligatr.co.uk">alligator</a>
+    </ffooter>
   </body>
 </html>
 
