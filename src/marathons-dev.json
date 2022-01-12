@@ -1,8 +1,12 @@
 {
+  "agdq22": {
+    "url": "agdq22.json",
+    "start": "2022-01-09T12:00:00.000Z",
+    "highlight": true
+  },
   "sgdq21": {
     "url": "sgdq21.json",
-    "start": "2021-07-04T11:00:00.000Z",
-    "highlight": true
+    "start": "2021-07-04T11:00:00.000Z"
   },
   "agdq21": {
     "url": "agdq21.json",

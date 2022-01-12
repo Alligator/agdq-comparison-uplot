@@ -61,10 +61,11 @@ function createSeries(marathons) {
     .fill(0)
     .map(() => new Array(bucketCount).fill(null));
 
+  const tzOffset = new Date().getTimezoneOffset() * 60;
   // every 5 minutes for a week. 2016 = # of 5 min chunks in a week
   for (let i = 0; i < bucketCount; i++) {
     const minuteOffset = i * bucketSize;
-    const timestamp = rootTimestamp + (minuteOffset * 60);
+    const timestamp = rootTimestamp + (minuteOffset * 60) - tzOffset;
     series[0][i] = timestamp;
   }
 
