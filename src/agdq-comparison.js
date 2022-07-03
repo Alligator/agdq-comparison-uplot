@@ -172,11 +172,12 @@ function drawOtherStats({ other_stats }) {
   const tbody = document.createElement('tbody');
   table.appendChild(tbody);
 
+  const tzOffset = new Date().getTimezoneOffset() * 60;
   const dateFormatter = uPlot.fmtDate('{WWW} {HH}:{mm} {aa}');
   other_stats.forEach((row) => {
     const tr = document.createElement('tr');
 
-    const ts = dateFormatter(new Date(row.max_viewers_ts * 1000));
+    const ts = dateFormatter(new Date((row.max_viewers_ts + tzOffset) * 1000));
     const color = row.name === highlightedMarathon ? 'white' : marathonColours[row.name];
 
     tr.innerHTML = `
