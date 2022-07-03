@@ -79,3 +79,5 @@ db_import agdq20 6
 db_import sgdq20 7
 db_import agdq21 8
 db_import sgdq21 9
+db_import agdq22 10
+db_import sgdq22 11

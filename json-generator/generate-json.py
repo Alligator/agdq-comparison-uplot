@@ -3,7 +3,7 @@ import json
 import sys
 from pprint import pprint
 
-con = duckdb.connect('gdq.db')
+con = duckdb.connect('gdq.db', read_only=True)
 
 con.execute('SELECT name FROM marathons')
 marathons = con.fetchall()
